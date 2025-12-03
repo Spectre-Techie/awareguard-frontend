@@ -8,7 +8,7 @@ const Home = () => {
       {/* Hero Section */}
       <section className="bg-slate-100 py-16 px-4 text-center relative">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          Stay Safe Online  {Testing} <br />with AwareGuard <br /> 
+          Stay Safe Online  Testing <br />with AwareGuard <br /> 
         </h1>
         <p className="text-lg text-blue-800 font-semibold mb-6">
           Your AI-powered guide to scam awareness and online safety
@@ -102,3 +102,4 @@ const Home = () => {
 
 
 export default Home;
+
