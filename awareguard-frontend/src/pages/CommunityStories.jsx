@@ -1,161 +1,289 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 
-const stories = [
-  {
-    title: "I Almost Lost ₦250,000",
-    name: "Adaobi E.",
-    content:
-      "I received a WhatsApp message about a job offer from a supposed HR manager. They sent me a form and requested an ‘application fee’. Thankfully, I paused and checked the company website — the HR name didn’t exist. AwareGuard helped confirm it was a scam.",
-  },
-  {
-    title: "Too Good to Be True",
-    name: "Tolu A.",
-    content:
-      "I was told I won a foreign lottery and needed to pay shipping fees. I almost fell for it until I searched for similar scam stories and realized it was the same pattern.",
-  },
-  {
-    title: "Crypto Investment Scam",
-    name: "Yusuf M.",
-    content:
-      "A friend introduced me to a Telegram group promising double returns on crypto investments. I sent ₦50,000 and never heard from them again. Lesson learned: if it sounds too good to be true, it probably is.",
-  },
-  {
-    title: "Fake Online Store",
-    name: "Ngozi K.",
-    content:
-      "I saw an Instagram ad selling discounted sneakers. I paid via transfer and never got the product. The page disappeared a week later.",
-  },
-  {
-    title: "Romance Gone Wrong",
-    name: "Daniel A.",
-    content:
-      "I met someone on Facebook who claimed to live abroad. We chatted for weeks before she asked for money for 'medical emergencies'. That’s when I knew something was off.",
-  },
-  {
-    title: "Fake Loan App Trap",
-    name: "Bola T.",
-    content:
-      "I downloaded a loan app that promised instant cash. After giving them access to my contacts and photos, they started threatening messages when I delayed payment. It was a nightmare.",
-  },
-  {
-    title: "Job Interview Scam",
-    name: "Chinedu L.",
-    content:
-      "I got an interview invite at a fake office. They asked me to pay for registration and ID card. I left immediately and reported it on AwareGuard.",
-  },
-  {
-    title: "Facebook Hacking Scam",
-    name: "Halima D.",
-    content:
-      "A friend's hacked Facebook account messaged me about a grant opportunity. I applied and was asked to pay processing fees. I almost paid until I called the real friend to verify.",
-  },
-  {
-    title: "Impersonated Bank Alert",
-    name: "Kingsley I.",
-    content:
-      "I received a text from someone claiming to be from my bank's fraud unit. They asked for my OTP to 'secure my account'. I nearly gave it away but remembered never to share OTPs.",
-  },
-  {
-    title: "Online Marketplace Deceit",
-    name: "Uche M.",
-    content:
-      "I tried to buy a used laptop from someone on Jiji. The seller insisted I pay a delivery fee first. I never got the laptop.",
-  },
-  {
-    title: "Scholarship Scam",
-    name: "Fatima B.",
-    content:
-      "An email claimed I won a scholarship abroad. They asked for visa processing fees. I called the school directly and confirmed there was no such program.",
-  },
-  {
-    title: "Fake NGO Donation",
-    name: "Ibrahim S.",
-    content:
-      "A supposed NGO messaged me to help feed orphans. I donated ₦10,000. Later found out the NGO didn't exist and others were scammed too.",
-  },
-  {
-    title: "Phishing Email",
-    name: "Opeyemi F.",
-    content:
-      "I got an email that looked exactly like my bank’s. It asked me to 'verify my login'. I clicked the link but my instinct told me to stop. I changed my password immediately.",
-  },
-  {
-    title: "Airtime Flipping Lie",
-    name: "Zainab Y.",
-    content:
-      "Someone promised to flip ₦1,000 airtime into ₦5,000 in 10 minutes. I sent it and got blocked. These are everywhere on WhatsApp groups.",
-  },
-  {
-    title: "Instagram Influencer Fraud",
-    name: "Taiwo O.",
-    content:
-      "An influencer was advertising a cheap iPhone reseller. I ordered, paid, and never received the phone. Turns out the influencer’s account was hacked.",
-  },
-  {
-    title: "Job Agency Scam",
-    name: "Michael N.",
-    content:
-      "A job agency collected ₦15,000 for documentation. They kept postponing my start date for weeks. Eventually, I realized it was all fake.",
-  },
-  {
-    title: "Medical Donation Scam",
-    name: "Blessing J.",
-    content:
-      "I saw a viral tweet asking for urgent funds for a baby’s surgery. Something felt off. I checked AwareGuard and found it was previously reported as fake.",
-  },
-  {
-    title: "eCommerce Scam Alert",
-    name: "Joseph T.",
-    content:
-      "A site was offering electronics at 70% off. I made a purchase but no confirmation. Luckily, I paid using a traceable platform and got refunded later.",
-  },
-  {
-    title: "Lost Wallet Scam",
-    name: "Salma A.",
-    content:
-      "I got a message from someone who found my 'lost wallet' and wanted to return it — for a transport fee. But I hadn’t even lost my wallet.",
-  },
-  {
-    title: "Scam WhatsApp Group",
-    name: "David K.",
-    content:
-      "A group promised to teach crypto trading secrets for ₦5,000. Once I paid, they removed me. That was the end of it.",
-  },
+const BACKEND = "https://awareguard-backend.onrender.com/api/stories";
+
+const initialForm = {
+  name: "",
+  title: "",
+  category: "",
+  content: "",
+};
+
+const categories = [
+  "Job Scam",
+  "Phishing Scam",
+  "Loan App Scam",
+  "Romance Scam",
+  "Online Shopping Scam",
+  "Investment Scam",
+  "Other",
 ];
 
-
 const CommunityStories = () => {
-  return (
-    <div className="flex flex-col min-h-screen bg-slate-200 text-gray-900">
-   
+  const [stories, setStories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [form, setForm] = useState(initialForm);
+  const [showForm, setShowForm] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [commentText, setCommentText] = useState({});
+  const [commentLoading, setCommentLoading] = useState({});
+  const [likingId, setLikingId] = useState(null);
 
-      <main className="flex-grow px-6 py-16 max-w-5xl mx-auto">
-        <h1 className="text-4xl font-bold text-center text-primary mb-4">Community Stories</h1>
-        <p className="text-center font-semibold text-gray-800 max-w-xl mx-auto mb-10">
-          Real experiences from people just like you. Learn from their stories and stay alert.
+  // Fetch stories
+  const loadStories = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${BACKEND}`);
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Failed to fetch stories");
+
+      setStories(data.stories);
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadStories();
+  }, []);
+
+  // Handle form submit
+  const submitStory = async (e) => {
+    e.preventDefault();
+
+    setSubmitLoading(true);
+    setError("");
+
+    try:
+      const res = await fetch(`${BACKEND}/submit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to submit story");
+
+      setStories((prev) => [data.story, ...prev]);
+      setForm(initialForm);
+      setShowForm(false);
+
+    } catch (err) {
+      setError(err.message || "Failed to submit story");
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
+  // Like story
+  const likeStory = async (id) => {
+    setLikingId(id);
+    try {
+      const res = await fetch(`${BACKEND}/${id}/like`, {
+        method: "POST",
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setStories((prev) =>
+        prev.map((s) =>
+          s._id === id ? { ...s, likesCount: data.likesCount } : s
+        )
+      );
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLikingId(null);
+    }
+  };
+
+  // Comment on story
+  const addComment = async (id) => {
+    const text = commentText[id];
+    if (!text) return;
+
+    setCommentLoading((prev) => ({ ...prev, [id]: true }));
+
+    try {
+      const res = await fetch(`${BACKEND}/${id}/comment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setStories((prev) =>
+        prev.map((s) =>
+          s._id === id ? { ...s, comments: data.comments } : s
+        )
+      );
+
+      setCommentText((prev) => ({ ...prev, [id]: "" }));
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setCommentLoading((prev) => ({ ...prev, [id]: false }));
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-200 text-gray-900 px-4 py-10">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-4xl font-bold text-center mb-2">Community Stories</h1>
+        <p className="text-center text-gray-700 font-semibold mb-8">
+          Real experiences from people who spotted, escaped, or prevented scams.
         </p>
 
-        <div className="grid gap-6">
-          {stories.map((story, index) => (
-            <div key={index} className="bg-slate-100 p-6 rounded-xl shadow-md hover:shadow-lg transition">
-              <h3 className="text-xl font-bold text-primary mb-1">{story.title}</h3>
-              <p className="text-gray-800 font-semibold text-sm mb-2 italic">— {story.name}</p>
-              <p className=" font-semibold text-gray-700">{story.content}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="text-center mt-12">
+        {/* Add story button */}
+        <div className="text-right mb-6">
           <button
-            disabled
-            className="bg-gray-900 text-white px-6 py-3 rounded-full opacity-60 cursor-not-allowed"
+            className="bg-gray-900 text-white px-5 py-2 font-semibold rounded-full hover:bg-blue-900 transition"
+            onClick={() => setShowForm(!showForm)}
           >
-            Submit Your Story (Coming Soon)
+            {showForm ? "Close Form" : "Share Your Story"}
           </button>
         </div>
-      </main>
 
-     
+        {/* Form */}
+        {showForm && (
+          <form
+            onSubmit={submitStory}
+            className="bg-white p-6 shadow-lg rounded-xl mb-8 space-y-4 border"
+          >
+            {error && (
+              <p className="text-red-600 text-sm font-semibold">{error}</p>
+            )}
+
+            <input
+              type="text"
+              name="name"
+              placeholder="Your name (optional)"
+              className="w-full border p-2 rounded-md"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            />
+
+            <input
+              type="text"
+              name="title"
+              placeholder="Story title"
+              className="w-full border p-2 rounded-md font-semibold"
+              required
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+            />
+
+            <select
+              name="category"
+              className="w-full border p-2 rounded-md font-semibold bg-white"
+              required
+              value={form.category}
+              onChange={(e) => setForm({ ...form, category: e.target.value })}
+            >
+              <option value="">Select Category</option>
+              {categories.map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+
+            <textarea
+              name="content"
+              rows="4"
+              placeholder="What happened?"
+              className="w-full border p-2 rounded-md font-semibold resize-none"
+              required
+              value={form.content}
+              onChange={(e) => setForm({ ...form, content: e.target.value })}
+            />
+
+            <button
+              type="submit"
+              disabled={submitLoading}
+              className="bg-blue-900 text-white px-6 py-2 rounded-full font-semibold hover:bg-gray-900 transition disabled:opacity-50"
+            >
+              {submitLoading ? "Submitting..." : "Submit Story"}
+            </button>
+          </form>
+        )}
+
+        {/* Stories List */}
+        {loading ? (
+          <p className="text-center text-gray-700 font-semibold">Loading stories...</p>
+        ) : stories.length === 0 ? (
+          <p className="text-center text-gray-700 font-semibold">
+            No stories yet. Be the first to share!
+          </p>
+        ) : (
+          <div className="space-y-6">
+            {stories.map((story) => (
+              <div
+                key={story._id}
+                className="bg-white p-6 rounded-xl shadow border space-y-3"
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900">
+                      {story.title}
+                    </h2>
+                    <p className="text-gray-700 font-semibold">
+                      {story.name || "Anonymous"} • {story.category}
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => likeStory(story._id)}
+                    disabled={likingId === story._id}
+                    className="px-3 py-1 rounded-full border bg-gray-100 hover:bg-gray-900 hover:text-white transition font-semibold text-sm"
+                  >
+                    👍 {story.likesCount}
+                  </button>
+                </div>
+
+                <p className="text-gray-900 font-semibold">{story.content}</p>
+
+                {/* Comments */}
+                <div className="mt-2 space-y-2">
+                  {story.comments?.map((c, i) => (
+                    <div key={i} className="bg-gray-100 p-2 rounded-md text-sm">
+                      <p className="font-semibold text-gray-900">{c.name}</p>
+                      <p className="text-gray-800">{c.text}</p>
+                    </div>
+                  ))}
+
+                  <div className="flex gap-2 mt-2">
+                    <input
+                      type="text"
+                      placeholder="Write a comment"
+                      className="flex-1 border p-2 rounded-md text-sm font-semibold"
+                      value={commentText[story._id] || ""}
+                      onChange={(e) =>
+                        setCommentText({
+                          ...commentText,
+                          [story._id]: e.target.value,
+                        })
+                      }
+                    />
+                    <button
+                      onClick={() => addComment(story._id)}
+                      disabled={commentLoading[story._id]}
+                      className="px-4 py-1 bg-gray-900 text-white rounded-full text-sm font-semibold hover:bg-blue-900 transition disabled:opacity-50"
+                    >
+                      {commentLoading[story._id] ? "..." : "Send"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
