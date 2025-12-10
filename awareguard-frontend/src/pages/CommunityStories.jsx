@@ -56,31 +56,30 @@ const CommunityStories = () => {
     e.preventDefault();
 
     setSubmitLoading(true);
-setError("");
+    setError("");
 
-try {
-  const res = await fetch(`${BACKEND}/submit`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(form),
-  });
+    try {
+      const res = await fetch(`${BACKEND}/submit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "Failed to submit story");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to submit story");
 
-  // Add new story to page
-  setStories((prev) => [data.story, ...prev]);
+      // Add new story to page
+      setStories((prev) => [data.story, ...prev]);
 
-  // Reset form
-  setForm(initialForm);
-  setShowForm(false);
-
-} catch (err) {
-  setError(err.message || "Failed to submit story");
-} finally {
-  setSubmitLoading(false);
-}
-
+      // Reset form
+      setForm(initialForm);
+      setShowForm(false);
+    } catch (err) {
+      setError(err.message || "Failed to submit story");
+    } finally {
+      setSubmitLoading(false);
+    }
+  };   // ✅ FIXED: submitStory now closes properly
 
   // Like story
   const likeStory = async (id) => {
@@ -292,4 +291,3 @@ try {
 };
 
 export default CommunityStories;
-
