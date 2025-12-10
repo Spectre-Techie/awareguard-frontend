@@ -56,28 +56,31 @@ const CommunityStories = () => {
     e.preventDefault();
 
     setSubmitLoading(true);
-    setError("");
+setError("");
 
-    try:
-      const res = await fetch(`${BACKEND}/submit`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+try {
+  const res = await fetch(`${BACKEND}/submit`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(form),
+  });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to submit story");
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Failed to submit story");
 
-      setStories((prev) => [data.story, ...prev]);
-      setForm(initialForm);
-      setShowForm(false);
+  // Add new story to page
+  setStories((prev) => [data.story, ...prev]);
 
-    } catch (err) {
-      setError(err.message || "Failed to submit story");
-    } finally {
-      setSubmitLoading(false);
-    }
-  };
+  // Reset form
+  setForm(initialForm);
+  setShowForm(false);
+
+} catch (err) {
+  setError(err.message || "Failed to submit story");
+} finally {
+  setSubmitLoading(false);
+}
+
 
   // Like story
   const likeStory = async (id) => {
@@ -289,3 +292,4 @@ const CommunityStories = () => {
 };
 
 export default CommunityStories;
+
