@@ -8,7 +8,7 @@ const AskAwareGuard = () => {
 
   const answerRef = useRef(null);
   const textareaRef = useRef(null);
-  const baseURL = import.meta.env.VITE_API_URL;
+  const baseURL = 'https://awareguard-backend.onrender.com';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -136,3 +136,4 @@ const AskAwareGuard = () => {
 };
 
 export default AskAwareGuard;
+
